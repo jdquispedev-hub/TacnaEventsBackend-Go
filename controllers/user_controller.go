@@ -4,26 +4,20 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"tacna-events-backend/models"
-    "tacna-events-backend/db"	
 	"context"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// func GetUsers(c *gin.Context) {
+type UserController struct {
+	db *pgxpool.Pool
+}
 
-//     users := []models.User{}
+func NewUserController(db *pgxpool.Pool) *UserController {
+	return &UserController{db: db}
+}
 
-//     c.JSON(http.StatusOK, users)
-// }
-func GetUsers(c *gin.Context) {
-
-	conn, err := db.ConnectDB()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "DB error"})
-		return
-	}
-	defer conn.Close(context.Background())
-
-	rows, err := conn.Query(context.Background(), "SELECT id, name, email FROM users")
+func (uc *UserController) GetUsers(c *gin.Context) {
+	rows, err := uc.db.Query(context.Background(), "SELECT id, name, email FROM users")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Query error"})
 		return
@@ -35,7 +29,7 @@ func GetUsers(c *gin.Context) {
 	for rows.Next() {
 		var user models.User
 
-		err := rows.Scan(&user.ID, &user.Name, &user.Email)
+		err := rows.Scan(&user.ID, &user.Email, &user.Password)
 		if err != nil {
 			continue
 		}

@@ -5,6 +5,7 @@ import (
 	"tacna-events-backend/controllers"
 )
 
-func SetupRoutes(r gin.IRouter){
-	r.GET("/users", controllers.GetUsers)
+func SetupRoutes(r *gin.Engine, userController *controllers.UserController, eventController *controllers.EventController) {
+	r.GET("/users", userController.GetUsers)
+	r.GET("/events", eventController.GetEvents)
 }
