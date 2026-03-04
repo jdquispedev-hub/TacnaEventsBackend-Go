@@ -11,6 +11,7 @@ type Event struct {
 	Price       float64   `json:"price"`
 	Image_URL   string    `json:"image_url"`
 	Category    string    `json:"category"`
+	CategoryID  int       `json:"category_id"`
 	Priority    int       `json:"priority"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
