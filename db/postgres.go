@@ -10,7 +10,7 @@ var DB *pgxpool.Pool
 
 func ConnectDB() (*pgxpool.Pool, error) {
     conn, err := pgxpool.New(context.Background(),
-        "postgres://postgres:jesus@localhost:5432/Tacna_events")
+        "postgres://postgres:jesus@localhost:5432/tacna_events_go")
     if err != nil {
         return nil, err
     }

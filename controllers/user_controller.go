@@ -6,6 +6,7 @@ import (
 	"tacna-events-backend/models"
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"log"
 )
 
 type UserController struct {
@@ -38,4 +39,18 @@ func (uc *UserController) GetUsers(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, users)
+}
+
+func (uc *UserController) CreateUser(c *gin.Context) {
+
+	var user models.User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		log.Println("❌ Error binding JSON:", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Println("📥 Request recibido:", user)
+	
+	c.JSON(http.StatusOK, gin.H{"message": "User created successfully"})
 }
