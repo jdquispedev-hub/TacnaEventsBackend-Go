@@ -1,41 +1,27 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"tacna-events-backend/models"
-	"context"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"log"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type UserController struct {
-	db *pgxpool.Pool
+	db *gorm.DB
 }
 
-func NewUserController(db *pgxpool.Pool) *UserController {
+func NewUserController(db *gorm.DB) *UserController {
 	return &UserController{db: db}
 }
 
 func (uc *UserController) GetUsers(c *gin.Context) {
-	rows, err := uc.db.Query(context.Background(), "SELECT id, name, email FROM users")
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Query error"})
-		return
-	}
-	defer rows.Close()
-
 	var users []models.User
-
-	for rows.Next() {
-		var user models.User
-
-		err := rows.Scan(&user.ID, &user.Email, &user.Password)
-		if err != nil {
-			continue
-		}
-
-		users = append(users, user)
+	result := uc.db.Find(&users)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get users"})
+		return
 	}
 
 	c.JSON(http.StatusOK, users)
@@ -45,12 +31,9 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
-		log.Println("❌ Error binding JSON:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	log.Println("📥 Request recibido:", user)
-	
 	c.JSON(http.StatusOK, gin.H{"message": "User created successfully"})
 }

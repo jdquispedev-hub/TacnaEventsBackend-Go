@@ -8,20 +8,22 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	"gorm.io/gorm"
 )
 
 type EventController struct {
 	eventService *services.EventService
 }
 
-func NewEventController(db *pgxpool.Pool) *EventController {
+func NewEventController(db *gorm.DB) *EventController {
 	return &EventController{
 		eventService: services.NewEventService(db),
 	}
 }
 
 func (ec *EventController) GetEvents(c *gin.Context) {
+	//quieor poner un log del request 
+	println("Request: ", c.Request.URL.Path)
 	events, err := ec.eventService.GetAllEvents()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get events", "details": err.Error()})
@@ -38,7 +40,7 @@ func (ec *EventController) GetEvent(c *gin.Context) {
 		return
 	}
 
-	event, err := ec.eventService.GetEventByID(id)
+	event, err := ec.eventService.GetEventByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Event not found"})
 		return
@@ -76,13 +78,13 @@ func (ec *EventController) UpdateEvent(c *gin.Context) {
 		return
 	}
 
-	err = ec.eventService.UpdateEvent(id, &event)
+	err = ec.eventService.UpdateEvent(uint(id), &event)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update event", "details": err.Error()})
 		return
 	}
 
-	event.ID = id
+	event.ID = uint(id)
 	c.JSON(http.StatusOK, event)
 }
 
@@ -93,7 +95,7 @@ func (ec *EventController) DeleteEvent(c *gin.Context) {
 		return
 	}
 
-	err = ec.eventService.DeleteEvent(id)
+	err = ec.eventService.DeleteEvent(uint(id))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete event", "details": err.Error()})
 		return

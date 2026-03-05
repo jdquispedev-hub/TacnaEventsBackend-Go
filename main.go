@@ -1,30 +1,42 @@
 package main
 
 import (
-    "github.com/gin-gonic/gin"
-    "tacna-events-backend/routes"
-    "tacna-events-backend/db"
-    "tacna-events-backend/controllers"
+	"fmt"
+	"log"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+
+	"tacna-events-backend/controllers"
+	"tacna-events-backend/routes"
 )
 
 func main() {
-    r := gin.Default()
+	r := gin.Default()
 
-    // conectar DB con pool
-    pool, err := db.ConnectDB()
-    if err != nil {
-        panic(err)
-    }
-    defer pool.Close()
-    
-    // Asignar pool global
-    db.DB = pool
+	// Conectar a PostgreSQL con GORM
+	dsn := "host=localhost user=postgres password=jesus dbname=Tacna_events port=5432 sslmode=disable TimeZone=America/Lima"
 
-    // Inyectar DB en controladores
-    userController := controllers.NewUserController(pool)
-    eventController := controllers.NewEventController(pool)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+	if err != nil {
+		log.Fatal("Failed to connect to database:", err)
+	}
 
-    routes.SetupRoutes(r, userController, eventController)
+	// Auto migrate (crea tablas si no existen)
 
-    r.Run(":8001")
+
+	fmt.Println("✅ Conectado a PostgreSQL con GORM")
+
+	// Inyectar DB en controladores
+	userController := controllers.NewUserController(db)
+	eventController := controllers.NewEventController(db)
+	categoryController := controllers.NewCategoryController(db)
+	
+	routes.SetupRoutes(r, userController, eventController, categoryController)
+
+	r.Run(":8001")
 }

@@ -1,0 +1,71 @@
+# Binaries compiled for your specific OS
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+tacna-events-backend
+tacna-events-backend.exe
+
+# Go specific files
+*.test
+*.prof
+vendor/
+go.work
+
+# Dependency directories (remove if you use go vendor)
+node_modules/
+
+# Logs
+*.log
+logs/
+access.log
+error.log
+
+# Environment variables - NEVER commit these
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.vscode/settings.json
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Coverage reports
+coverage.out
+coverage.html
+
+# Air live reload
+.air.toml
+
+# Migration tool files
+migrate/migrations.db
+
+# Docker (if using)
+.dockerignore
