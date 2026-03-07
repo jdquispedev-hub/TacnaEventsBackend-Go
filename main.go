@@ -17,7 +17,7 @@ func main() {
 	r := gin.Default()
 
 	// Conectar a PostgreSQL con GORM
-	dsn := "host=localhost user=postgres password=jesus dbname=Tacna_events port=5432 sslmode=disable TimeZone=America/Lima"
+	dsn := "host=localhost user=postgres password=jesus dbname=tacna_events_go port=5432 sslmode=disable TimeZone=America/Lima"
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),

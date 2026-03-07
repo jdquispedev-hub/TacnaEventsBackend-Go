@@ -25,5 +25,7 @@ func SetupRoutes(r *gin.Engine, userController *controllers.UserController, even
 	// Category routes
 
 	r.GET("/categories", categoryController.GetCategories)
+	r.POST("/categories", categoryController.CreateCategory)
+	r.GET("/categories/:id", categoryController.GetCategoryByID)
 
 }
